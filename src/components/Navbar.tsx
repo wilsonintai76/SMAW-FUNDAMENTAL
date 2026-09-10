@@ -10,14 +10,11 @@ import {
   X, 
   ChevronLeft, 
   ChevronRight, 
-  Layers,
-  Zap,
   CheckCircle2,
-  ExternalLink,
   Printer
 } from 'lucide-react';
 import { SectionId } from '../types';
-import { SECTIONS_META } from '../data/weldingData';
+import { SECTIONS_META, QUIZ_QUESTIONS } from '../data/weldingData';
 
 interface NavbarProps {
   activeSection: SectionId;
@@ -44,25 +41,6 @@ export default function Navbar({
   const navScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-
-  // Clause ordered list
-  const orderedSectionIds: SectionId[] = [
-    'overview',
-    '7.1.1',
-    '7.1.2',
-    '7.1.3',
-    '7.1.4',
-    '7.1.5',
-    '7.1.6',
-    '7.1.7',
-    '7.1.8',
-    '7.1.9'
-  ];
-
-  const currentIndex = orderedSectionIds.indexOf(activeSection);
-  const prevSection = currentIndex > 0 ? orderedSectionIds[currentIndex - 1] : null;
-  const nextSection = currentIndex < orderedSectionIds.length - 1 ? orderedSectionIds[currentIndex + 1] : null;
-  const activeMeta = SECTIONS_META.find(s => s.id === activeSection) || SECTIONS_META[0];
 
   // Scroll checking for horizontal tabs
   const checkScroll = () => {
@@ -394,7 +372,7 @@ export default function Navbar({
                   <span>Mastery Quiz</span>
                 </div>
                 <p className="text-[10px] text-slate-400 leading-tight">
-                  10-question certification test with live scoring
+                  {QUIZ_QUESTIONS.length}-question certification test with live scoring
                 </p>
               </button>
             </div>

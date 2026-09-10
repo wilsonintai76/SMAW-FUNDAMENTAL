@@ -3,18 +3,12 @@ import {
   BookOpen, 
   Search, 
   X, 
-  Tag, 
   ExternalLink, 
-  Compass, 
-  Zap, 
-  Sliders, 
-  Layers, 
-  ShieldAlert, 
-  Sparkles,
   ChevronRight,
   Filter
 } from 'lucide-react';
 import { SectionId } from '../types';
+import { useModalA11y } from '../lib/useModalA11y';
 
 export interface GlossaryTerm {
   id: string;
@@ -260,6 +254,8 @@ export default function TechnicalGlossary({ isOpen, onClose, onNavigateToSection
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeTermId, setActiveTermId] = useState<string | null>(null);
 
+  const dialogRef = useModalA11y(onClose, isOpen);
+
   const categories = useMemo(() => {
     return ['All', 'Electrical Physics', 'Metallurgy & Consumables', 'Equipment & Components', 'Joints & Geometry', 'Safety & Standards'];
   }, []);
@@ -281,10 +277,12 @@ export default function TechnicalGlossary({ isOpen, onClose, onNavigateToSection
 
   return (
     <div 
+      ref={dialogRef}
       className="fixed inset-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-md flex justify-center items-center p-3 sm:p-6 transition-opacity animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="glossary-modal-title"
+      tabIndex={-1}
     >
       <div className="w-full max-w-4xl bg-slate-900 border border-slate-750 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}

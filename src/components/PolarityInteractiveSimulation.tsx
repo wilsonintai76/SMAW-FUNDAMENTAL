@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Zap, Sliders, Eye, Compass, Flame, ShieldAlert, Sparkles, Activity, Layers } from 'lucide-react';
+import { Play, Pause, Zap, Compass, Layers } from 'lucide-react';
 
 interface Particle {
   x: number;
@@ -22,11 +22,6 @@ export default function PolarityInteractiveSimulation() {
   const [showElectrons, setShowElectrons] = useState<boolean>(true);
   const [showIons, setShowIons] = useState<boolean>(true);
   const [showConvection, setShowConvection] = useState<boolean>(true);
-  const [showHeatmap, setShowHeatmap] = useState<boolean>(true);
-  const [viewMode, setViewMode] = useState<'focus' | 'comparison'>('focus');
-
-  // Interactive probe selection
-  const [activeProbe, setActiveProbe] = useState<'electrode-tip' | 'plasma-core' | 'anode-spot' | 'weld-pool' | 'marangoni' | null>('weld-pool');
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -86,7 +81,6 @@ export default function PolarityInteractiveSimulation() {
       const rodY = 70;
       const arcGapPx = 30 + (arcLengthMm - 1.5) * 14;
       const workSurfaceY = rodY + arcGapPx;
-      const poolCenterY = workSurfaceY;
 
       // In AC mode, calculate phase (50 Hz simulated)
       const acPhase = Math.sin(localTime * 4); // oscillates between -1 and 1
@@ -214,23 +208,21 @@ export default function PolarityInteractiveSimulation() {
       const poolDepthPx = (isDCEN ? 75 : isDCEP ? 45 : 60) * (currentRatio * 0.85);
 
       // Draw Heat Affected Zone (HAZ) outer contour
-      if (showHeatmap) {
-        ctx.save();
-        const hazGrad = ctx.createRadialGradient(
-          rodX, workSurfaceY + 10, 10,
-          rodX, workSurfaceY + 20, poolWidthPx * 0.9
-        );
-        hazGrad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
-        hazGrad.addColorStop(0.5, 'rgba(185, 28, 28, 0.25)');
-        hazGrad.addColorStop(0.85, 'rgba(127, 29, 29, 0.12)');
-        hazGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+      ctx.save();
+      const hazGrad = ctx.createRadialGradient(
+        rodX, workSurfaceY + 10, 10,
+        rodX, workSurfaceY + 20, poolWidthPx * 0.9
+      );
+      hazGrad.addColorStop(0, 'rgba(239, 68, 68, 0.45)');
+      hazGrad.addColorStop(0.5, 'rgba(185, 28, 28, 0.25)');
+      hazGrad.addColorStop(0.85, 'rgba(127, 29, 29, 0.12)');
+      hazGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
 
-        ctx.fillStyle = hazGrad;
-        ctx.beginPath();
-        ctx.ellipse(rodX, workSurfaceY + poolDepthPx * 0.45, poolWidthPx * 0.85, poolDepthPx * 1.1, 0, 0, Math.PI);
-        ctx.fill();
-        ctx.restore();
-      }
+      ctx.fillStyle = hazGrad;
+      ctx.beginPath();
+      ctx.ellipse(rodX, workSurfaceY + poolDepthPx * 0.45, poolWidthPx * 0.85, poolDepthPx * 1.1, 0, 0, Math.PI);
+      ctx.fill();
+      ctx.restore();
 
       // Draw Molten Weld Pool (Liquid Steel)
       ctx.save();
@@ -295,8 +287,6 @@ export default function PolarityInteractiveSimulation() {
         ctx.fillStyle = '#fef08a';
         ctx.lineWidth = 1.6;
         ctx.setLineDash([3, 2]);
-
-        const flowPhase = (localTime * 2) % 1;
 
         if (isDCEN) {
           // Inward & Downward flow (digging jet)
@@ -510,7 +500,7 @@ export default function PolarityInteractiveSimulation() {
     return () => {
       cancelAnimationFrame(animFrameIdRef.current);
     };
-  }, [activePolarity, isPlaying, simSpeed, amperage, arcLengthMm, showElectrons, showIons, showConvection, showHeatmap, currentRatio]);
+  }, [activePolarity, isPlaying, simSpeed, amperage, arcLengthMm, showElectrons, showIons, showConvection, currentRatio]);
 
   return (
     <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 space-y-5">

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layers, ShieldCheck, Zap, Activity, BatteryCharging, Fuel, RefreshCw, FileText } from 'lucide-react';
+import { ShieldCheck, Zap, Activity } from 'lucide-react';
 import { MACHINE_TYPES } from '../data/weldingData';
 import { MachineType } from '../types';
 

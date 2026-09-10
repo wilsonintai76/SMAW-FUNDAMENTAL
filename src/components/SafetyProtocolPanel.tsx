@@ -11,13 +11,11 @@ import {
   HardHat, 
   Shirt, 
   Footprints, 
-  Ear, 
   Sparkles,
   Layers,
-  Thermometer,
-  FileCheck,
-  ChevronRight
+  FileCheck
 } from 'lucide-react';
+import { useModalA11y } from '../lib/useModalA11y';
 
 interface SafetyPanelProps {
   isOpen: boolean;
@@ -30,6 +28,8 @@ export default function SafetyProtocolPanel({ isOpen, onClose }: SafetyPanelProp
   const [activeTab, setActiveTab] = useState<TabType>('ppe');
   const [shadeAmperage, setShadeAmperage] = useState<number>(140);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+
+  const dialogRef = useModalA11y(onClose, isOpen);
 
   if (!isOpen) return null;
 
@@ -54,10 +54,12 @@ export default function SafetyProtocolPanel({ isOpen, onClose }: SafetyPanelProp
     <div className="fixed inset-0 z-50 overflow-hidden bg-slate-950/80 backdrop-blur-sm flex justify-end transition-opacity animate-in fade-in duration-200">
       {/* Slide-out Drawer Panel */}
       <div 
+        ref={dialogRef}
         className="w-full max-w-2xl bg-slate-900 border-l border-slate-750 h-full flex flex-col shadow-2xl overflow-hidden relative"
         role="dialog"
         aria-modal="true"
         aria-labelledby="safety-drawer-title"
+        tabIndex={-1}
       >
         {/* Drawer Header */}
         <div className="bg-slate-950 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-800 flex items-center justify-between gap-3">

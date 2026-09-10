@@ -1,23 +1,35 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { SectionId } from './types';
-import { SECTIONS_META } from './data/weldingData';
+import { SECTIONS_META, SECTION_ORDER } from './data/weldingData';
 import Navbar from './components/Navbar';
 import OverviewDashboard from './components/OverviewDashboard';
-import Section711Principles from './components/Section711Principles';
-import Section712Amperage from './components/Section712Amperage';
-import Section713Components from './components/Section713Components';
-import Section714Machines from './components/Section714Machines';
-import Section715ProsCons from './components/Section715ProsCons';
-import Section716Polarity from './components/Section716Polarity';
-import Section717ProcessAndSOP from './components/Section717ProcessAndSOP';
-import Section718Joints from './components/Section718Joints';
-import Section719JointUses from './components/Section719JointUses';
-import InteractiveParameterCalc from './components/InteractiveParameterCalc';
-import MasteryQuiz from './components/MasteryQuiz';
-import SafetyProtocolPanel from './components/SafetyProtocolPanel';
-import TechnicalGlossary from './components/TechnicalGlossary';
-import PrintHelperModal from './components/PrintHelperModal';
-import { ChevronLeft, ChevronRight, ShieldCheck, ShieldAlert, Flame, BookOpen, Layers, Printer } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShieldAlert, Flame, Printer } from 'lucide-react';
+
+// Clause views and modals are code-split so only the clause the user is reading
+// (plus the shell) is downloaded on first paint.
+const Section711Principles = lazy(() => import('./components/Section711Principles'));
+const Section712Amperage = lazy(() => import('./components/Section712Amperage'));
+const Section713Components = lazy(() => import('./components/Section713Components'));
+const Section714Machines = lazy(() => import('./components/Section714Machines'));
+const Section715ProsCons = lazy(() => import('./components/Section715ProsCons'));
+const Section716Polarity = lazy(() => import('./components/Section716Polarity'));
+const Section717ProcessAndSOP = lazy(() => import('./components/Section717ProcessAndSOP'));
+const Section718Joints = lazy(() => import('./components/Section718Joints'));
+const Section719JointUses = lazy(() => import('./components/Section719JointUses'));
+const InteractiveParameterCalc = lazy(() => import('./components/InteractiveParameterCalc'));
+const MasteryQuiz = lazy(() => import('./components/MasteryQuiz'));
+const SafetyProtocolPanel = lazy(() => import('./components/SafetyProtocolPanel'));
+const TechnicalGlossary = lazy(() => import('./components/TechnicalGlossary'));
+const PrintHelperModal = lazy(() => import('./components/PrintHelperModal'));
+
+function LoadingPanel() {
+  return (
+    <div className="flex items-center justify-center gap-3 py-24" role="status" aria-live="polite">
+      <div className="w-7 h-7 rounded-full border-2 border-slate-700 border-t-amber-500 animate-spin" />
+      <span className="text-xs font-mono text-slate-400">Loading clause data…</span>
+    </div>
+  );
+}
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<SectionId>('overview');
@@ -37,19 +49,9 @@ export default function App() {
     }
   };
 
-  // Clause ordered list for next/previous navigation
-  const orderedSections: SectionId[] = [
-    'overview',
-    '7.1.1',
-    '7.1.2',
-    '7.1.3',
-    '7.1.4',
-    '7.1.5',
-    '7.1.6',
-    '7.1.7',
-    '7.1.8',
-    '7.1.9'
-  ];
+  // Clause ordered list for next/previous navigation (single source of truth)
+  const orderedSections = SECTION_ORDER;
+  const lastClauseCode = SECTIONS_META[SECTIONS_META.length - 1].code;
 
   const currentIndex = orderedSections.indexOf(activeSection);
   const prevSection = currentIndex > 0 ? orderedSections[currentIndex - 1] : null;
@@ -136,15 +138,15 @@ export default function App() {
           />
         )}
 
-        {activeSection === '7.1.1' && <Section711Principles />}
-        {activeSection === '7.1.2' && <Section712Amperage />}
-        {activeSection === '7.1.3' && <Section713Components />}
-        {activeSection === '7.1.4' && <Section714Machines />}
-        {activeSection === '7.1.5' && <Section715ProsCons />}
-        {activeSection === '7.1.6' && <Section716Polarity />}
-        {activeSection === '7.1.7' && <Section717ProcessAndSOP onOpenSafety={() => setIsSafetyOpen(true)} />}
-        {activeSection === '7.1.8' && <Section718Joints />}
-        {activeSection === '7.1.9' && <Section719JointUses />}
+        {activeSection === '7.1.1' && <Suspense fallback={<LoadingPanel />}><Section711Principles /></Suspense>}
+        {activeSection === '7.1.2' && <Suspense fallback={<LoadingPanel />}><Section712Amperage /></Suspense>}
+        {activeSection === '7.1.3' && <Suspense fallback={<LoadingPanel />}><Section713Components /></Suspense>}
+        {activeSection === '7.1.4' && <Suspense fallback={<LoadingPanel />}><Section714Machines /></Suspense>}
+        {activeSection === '7.1.5' && <Suspense fallback={<LoadingPanel />}><Section715ProsCons /></Suspense>}
+        {activeSection === '7.1.6' && <Suspense fallback={<LoadingPanel />}><Section716Polarity /></Suspense>}
+        {activeSection === '7.1.7' && <Suspense fallback={<LoadingPanel />}><Section717ProcessAndSOP onOpenSafety={() => setIsSafetyOpen(true)} /></Suspense>}
+        {activeSection === '7.1.8' && <Suspense fallback={<LoadingPanel />}><Section718Joints /></Suspense>}
+        {activeSection === '7.1.9' && <Suspense fallback={<LoadingPanel />}><Section719JointUses /></Suspense>}
 
         {/* Stepper Navigation (Next / Previous Clause) - Desktop only (Mobile utilizes the persistent sticky bottom bar) */}
         {activeSection !== 'overview' && (
@@ -168,7 +170,7 @@ export default function App() {
 
             <div className="text-center">
               <span className="text-xs font-mono text-slate-400">
-                Standard Progress: Clause {currentMeta?.code} of 7.1.9
+                Standard Progress: Clause {currentMeta?.code} of {lastClauseCode}
               </span>
             </div>
 
@@ -272,7 +274,9 @@ export default function App() {
       {isCalcOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="max-w-3xl w-full my-8">
-            <InteractiveParameterCalc onClose={() => setIsCalcOpen(false)} />
+            <Suspense fallback={null}>
+              <InteractiveParameterCalc onClose={() => setIsCalcOpen(false)} />
+            </Suspense>
           </div>
         </div>
       )}
@@ -281,26 +285,32 @@ export default function App() {
       {isQuizOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="max-w-2xl w-full my-8">
-            <MasteryQuiz onClose={() => setIsQuizOpen(false)} />
+            <Suspense fallback={null}>
+              <MasteryQuiz onClose={() => setIsQuizOpen(false)} />
+            </Suspense>
           </div>
         </div>
       )}
 
       {/* Safety Protocol Slide-out Panel / Overlay */}
-      <SafetyProtocolPanel
-        isOpen={isSafetyOpen}
-        onClose={() => setIsSafetyOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <SafetyProtocolPanel
+          isOpen={isSafetyOpen}
+          onClose={() => setIsSafetyOpen(false)}
+        />
+      </Suspense>
 
       {/* Technical Glossary Modal */}
-      <TechnicalGlossary
-        isOpen={isGlossaryOpen}
-        onClose={() => setIsGlossaryOpen(false)}
-        onNavigateToSection={(sectionId) => {
-          setActiveSection(sectionId);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      <Suspense fallback={null}>
+        <TechnicalGlossary
+          isOpen={isGlossaryOpen}
+          onClose={() => setIsGlossaryOpen(false)}
+          onNavigateToSection={(sectionId) => {
+            setActiveSection(sectionId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </Suspense>
 
       {/* Industrial Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 pt-6 pb-24 md:py-6 px-4 text-xs text-slate-400">
@@ -326,12 +336,14 @@ export default function App() {
       </footer>
 
       {/* Printer-Friendly Helper Modal */}
-      <PrintHelperModal
-        isOpen={isPrintHelperOpen}
-        onClose={() => setIsPrintHelperOpen(false)}
-        sectionCode={currentMeta?.code || 'Overview'}
-        sectionTitle={currentMeta?.shortTitle || 'Overview Dashboard'}
-      />
+      <Suspense fallback={null}>
+        <PrintHelperModal
+          isOpen={isPrintHelperOpen}
+          onClose={() => setIsPrintHelperOpen(false)}
+          sectionCode={currentMeta?.code || 'Overview'}
+          sectionTitle={currentMeta?.shortTitle || 'Overview Dashboard'}
+        />
+      </Suspense>
     </div>
   );
 }

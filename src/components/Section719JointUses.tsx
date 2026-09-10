@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Award, CheckCircle2, XCircle, Building2, ShieldCheck, Factory, Gauge } from 'lucide-react';
+import { CheckCircle2, XCircle, Building2, Factory } from 'lucide-react';
 import { WELDING_JOINTS } from '../data/weldingData';
 import { WeldingJoint } from '../types';
 

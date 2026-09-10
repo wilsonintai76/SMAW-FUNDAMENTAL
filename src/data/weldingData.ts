@@ -1,4 +1,4 @@
-import { MachineType, PolarityMode, MachineComponent, ProcessLabel, PreWeldSopStep, WeldingJoint, QuizQuestion } from '../types';
+import { SectionId, SectionMeta, MachineType, PolarityMode, MachineComponent, ProcessLabel, PreWeldSopStep, WeldingJoint, ButtJointPrep, QuizQuestion } from '../types';
 
 export const SECTIONS_META = [
   {
@@ -71,7 +71,10 @@ export const SECTIONS_META = [
     shortTitle: 'Joint Uses & Merits',
     description: 'Engineering trade-offs, stress path distributions, preparation costs, and structural industrial applications.'
   }
-] as const;
+] as const satisfies readonly SectionMeta[];
+
+/** Clause order used for the next/previous stepper, derived from SECTIONS_META. */
+export const SECTION_ORDER: SectionId[] = SECTIONS_META.map(s => s.id);
 
 // 7.1.3 Machine Components
 export const MACHINE_COMPONENTS: MachineComponent[] = [
@@ -785,6 +788,44 @@ export const WELDING_JOINTS: WeldingJoint[] = [
     thicknessRange: '0.8mm to 6mm sheet metal'
   }
 ];
+
+// Butt-joint edge preparation bands. Structured form of the rules quoted in the
+// WELDING_JOINTS "butt-joint" entry (variations + preparationRequirements) so the
+// parameter calculator and the clause prose cannot drift apart. Fields the standard
+// leaves to the qualified WPS are marked "Per WPS" rather than invented here.
+export const BUTT_JOINT_PREP: ButtJointPrep[] = [
+  {
+    minThicknessMm: 0,
+    maxThicknessMm: 4,
+    label: 'Square Butt',
+    bevel: 'Square cut edge — no bevel required',
+    rootFace: 'None (square edge)',
+    rootOpening: 'Per WPS'
+  },
+  {
+    minThicknessMm: 5,
+    maxThicknessMm: 16,
+    label: 'Single-V Butt (60° included angle)',
+    bevel: '30° bevel per plate',
+    rootFace: '1.5 – 2.5 mm',
+    rootOpening: '2 – 3 mm'
+  },
+  {
+    minThicknessMm: 17,
+    maxThicknessMm: null,
+    label: 'Double-V Butt',
+    bevel: '30° bevel on both faces (balances thermal distortion)',
+    rootFace: '1.5 – 2.5 mm',
+    rootOpening: '2 – 3 mm'
+  }
+];
+
+/** Edge preparation band that applies to a given plate thickness. */
+export function buttJointPrepFor(thicknessMm: number): ButtJointPrep {
+  return BUTT_JOINT_PREP.find(
+    band => thicknessMm >= band.minThicknessMm && (band.maxThicknessMm === null || thicknessMm <= band.maxThicknessMm)
+  ) || BUTT_JOINT_PREP[0];
+}
 
 // Reference Welding Electrodes & Parameters
 export const ELECTRODE_PARAMETERS = [

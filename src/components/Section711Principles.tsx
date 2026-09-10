@@ -1,8 +1,18 @@
 import { useState } from 'react';
-import { Zap, Flame, Shield, Activity, Layers, Thermometer, Compass, CheckCircle2 } from 'lucide-react';
+import { Zap, Flame, Shield, Activity, Layers, Thermometer, CheckCircle2 } from 'lucide-react';
+
+const ARC_LAYERS = [
+  { id: 'all', label: 'Full Process', icon: Layers },
+  { id: 'plasma', label: 'Plasma Column (3500°-6000°C)', icon: Zap },
+  { id: 'shield', label: 'Flux Gas Envelope', icon: Shield },
+  { id: 'heat', label: 'Thermal & HAZ Zones', icon: Thermometer },
+  { id: 'slag', label: 'Slag Solidification', icon: Activity }
+] as const;
+
+type ArcLayerId = (typeof ARC_LAYERS)[number]['id'];
 
 export default function Section711Principles() {
-  const [activeLayer, setActiveLayer] = useState<'all' | 'plasma' | 'shield' | 'heat' | 'slag'>('all');
+  const [activeLayer, setActiveLayer] = useState<ArcLayerId>('all');
 
   return (
     <section id="section-7-1-1" className="space-y-6">
@@ -42,18 +52,12 @@ export default function Section711Principles() {
 
           {/* Layer Filter Buttons */}
           <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
-            {[
-              { id: 'all', label: 'Full Process', icon: Layers },
-              { id: 'plasma', label: 'Plasma Column (3500°-6000°C)', icon: Zap },
-              { id: 'shield', label: 'Flux Gas Envelope', icon: Shield },
-              { id: 'heat', label: 'Thermal & HAZ Zones', icon: Thermometer },
-              { id: 'slag', label: 'Slag Solidification', icon: Activity }
-            ].map((tab) => {
+            {ARC_LAYERS.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveLayer(tab.id as any)}
+                  onClick={() => setActiveLayer(tab.id)}
                   className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                     activeLayer === tab.id
                       ? 'bg-amber-500 text-slate-950 font-bold'

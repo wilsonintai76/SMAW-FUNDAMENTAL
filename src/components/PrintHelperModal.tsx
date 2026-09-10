@@ -1,4 +1,5 @@
-import { X, Printer, ExternalLink, AlertCircle, FileText, CheckCircle2 } from 'lucide-react';
+import { X, Printer, ExternalLink, AlertCircle } from 'lucide-react';
+import { useModalA11y } from '../lib/useModalA11y';
 
 interface PrintHelperModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ export default function PrintHelperModal({
   sectionCode,
   sectionTitle
 }: PrintHelperModalProps) {
+  const dialogRef = useModalA11y(onClose, isOpen);
+
   if (!isOpen) return null;
 
   const handleLaunchTab = () => {
@@ -28,9 +31,12 @@ export default function PrintHelperModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-opacity animate-in fade-in duration-200">
       <div 
+        ref={dialogRef}
         className="relative w-full max-w-lg bg-slate-900 border border-slate-850 rounded-2xl shadow-2xl p-6 sm:p-8 animate-in zoom-in-95 duration-200 flex flex-col"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="print-helper-title"
+        tabIndex={-1}
       >
         {/* Close Button */}
         <button
@@ -50,7 +56,7 @@ export default function PrintHelperModal({
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
               Print Workspace Utility
             </span>
-            <h2 className="text-lg font-bold text-slate-100 mt-1">
+            <h2 id="print-helper-title" className="text-lg font-bold text-slate-100 mt-1">
               Archival View &amp; PDF Export
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">

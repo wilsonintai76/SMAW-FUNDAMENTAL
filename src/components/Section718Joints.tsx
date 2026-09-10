@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layers, Crosshair, ZoomIn, ArrowRight } from 'lucide-react';
+import { Layers, Crosshair } from 'lucide-react';
 import { WELDING_JOINTS } from '../data/weldingData';
 import { WeldingJoint } from '../types';
 

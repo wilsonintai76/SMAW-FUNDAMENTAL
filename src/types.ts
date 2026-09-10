@@ -8,10 +8,7 @@ export type SectionId =
   | '7.1.6' 
   | '7.1.7' 
   | '7.1.8' 
-  | '7.1.9'
-  | 'calculator'
-  | 'checklist'
-  | 'quiz';
+  | '7.1.9';
 
 export interface SectionMeta {
   id: SectionId;
@@ -114,6 +111,21 @@ export interface WeldingJoint {
     shear: 'High' | 'Moderate';
   };
   thicknessRange: string;
+}
+
+/**
+ * Edge preparation for a butt joint, expressed as discrete thickness bands.
+ * Mirrors the rules quoted in WELDING_JOINTS so prose and calculation agree.
+ */
+export interface ButtJointPrep {
+  /** Inclusive upper bound of the band in mm; null means "and above". */
+  maxThicknessMm: number | null;
+  /** Lower bound of the band in mm. */
+  minThicknessMm: number;
+  label: string;
+  bevel: string;
+  rootFace: string;
+  rootOpening: string;
 }
 
 export interface QuizQuestion {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Cpu, CheckSquare, AlertOctagon, Wrench, ShieldAlert } from 'lucide-react';
+import { Cpu, CheckSquare, Wrench, ShieldAlert } from 'lucide-react';
 import { MACHINE_COMPONENTS } from '../data/weldingData';
 import { MachineComponent } from '../types';
 

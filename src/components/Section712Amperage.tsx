@@ -1,6 +1,7 @@
 import { useState, useId } from 'react';
-import { Sliders, Volume2, AlertTriangle, CheckCircle2, TrendingUp, Gauge, Info } from 'lucide-react';
+import { Sliders, Volume2, TrendingUp, Gauge, Info } from 'lucide-react';
 import { ELECTRODE_PARAMETERS } from '../data/weldingData';
+import { arcVoltageMidpoint, DEFAULT_TRAVEL_SPEED_MM_PER_MIN, heatInputKjPerMm } from '../lib/weldMath';
 
 export default function Section712Amperage() {
   const [selectedElectrodeCode, setSelectedElectrodeCode] = useState<string>('E7018');
@@ -18,11 +19,10 @@ export default function Section712Amperage() {
   const isTooHigh = currentAmp > currentDiameter.ampMax;
   const isOptimal = !isTooLow && !isTooHigh;
 
-  // Approximate heat input calculation: V ~ 24V, S ~ 120 mm/min, efficiency ~ 0.8
-  const estimatedVolt = isTooHigh ? 27 : isTooLow ? 20 : 24;
-  const travelSpeedMmMin = 120;
-  const efficiency = 0.8;
-  const heatInputKjMm = ((estimatedVolt * currentAmp * 60) / (travelSpeedMmMin * 1000) * efficiency).toFixed(2);
+  // Heat input from the electrode's own arc-voltage band rather than a fixed 24 V guess.
+  const travelSpeedMmMin = DEFAULT_TRAVEL_SPEED_MM_PER_MIN;
+  const estimatedVolt = arcVoltageMidpoint(currentDiameter.voltRange);
+  const heatInputKjMm = heatInputKjPerMm(estimatedVolt, currentAmp, travelSpeedMmMin).toFixed(2);
 
   // Status badges & feedback
   const statusInfo = isTooLow
@@ -196,11 +196,17 @@ export default function Section712Amperage() {
             <div className="p-2.5 rounded bg-slate-900 border border-slate-800 space-y-1 text-xs">
               <div className="flex justify-between text-slate-400">
                 <span>Operating Voltage:</span>
-                <span className="font-mono text-slate-200">{estimatedVolt} V</span>
+                <span className="font-mono text-slate-200">
+                  {estimatedVolt} V <span className="text-slate-500">({currentDiameter.voltRange})</span>
+                </span>
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Calculated Heat Input:</span>
                 <span className="font-mono text-amber-400">{heatInputKjMm} kJ/mm</span>
+              </div>
+              <div className="flex justify-between text-slate-400">
+                <span>Travel Speed (assumed):</span>
+                <span className="font-mono text-slate-200">{travelSpeedMmMin} mm/min</span>
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Penetration Class:</span>

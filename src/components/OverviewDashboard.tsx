@@ -1,4 +1,5 @@
-import { Zap, Sliders, Cpu, Layers, Scale, Compass, CheckSquare, Crosshair, Award, ArrowRight, ShieldCheck, ShieldAlert, Flame, BookOpen } from 'lucide-react';
+import { Zap, Sliders, Cpu, Layers, Scale, Compass, CheckSquare, Crosshair, Award, ArrowRight, ShieldCheck, ShieldAlert, BookOpen } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { SectionId } from '../types';
 import { SECTIONS_META } from '../data/weldingData';
 
@@ -11,7 +12,7 @@ interface OverviewDashboardProps {
   onOpenGlossary?: () => void;
 }
 
-const SECTION_ICONS: Record<string, any> = {
+const SECTION_ICONS: Partial<Record<SectionId, LucideIcon>> = {
   '7.1.1': Zap,
   '7.1.2': Sliders,
   '7.1.3': Cpu,

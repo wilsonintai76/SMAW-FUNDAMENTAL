@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, XCircle, Scale, Table, Eye } from 'lucide-react';
+import { CheckCircle2, XCircle, Table, Eye } from 'lucide-react';
 import { MACHINE_TYPES } from '../data/weldingData';
 
 export default function Section715ProsCons() {

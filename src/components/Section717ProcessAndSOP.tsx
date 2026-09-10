@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layers, CheckSquare, ShieldCheck, AlertOctagon, HelpCircle, Sparkles, Award, ShieldAlert } from 'lucide-react';
+import { Layers, CheckSquare, ShieldCheck, Award, ShieldAlert } from 'lucide-react';
 import { PROCESS_LABELS, PRE_WELD_SOP_STEPS } from '../data/weldingData';
 import { ProcessLabel } from '../types';
 

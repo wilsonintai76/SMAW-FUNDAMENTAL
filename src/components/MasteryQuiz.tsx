@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Award, CheckCircle2, XCircle, RefreshCw, HelpCircle, ArrowRight, X } from 'lucide-react';
+import { Award, CheckCircle2, XCircle, RefreshCw, ArrowRight, X } from 'lucide-react';
 import { QUIZ_QUESTIONS } from '../data/weldingData';
+import { useModalA11y } from '../lib/useModalA11y';
 
 interface MasteryQuizProps {
   onClose?: () => void;
@@ -10,6 +11,8 @@ export default function MasteryQuiz({ onClose }: MasteryQuizProps) {
   const [currentQIndex, setCurrentQIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState<boolean>(false);
+
+  const dialogRef = useModalA11y(onClose);
 
   const question = QUIZ_QUESTIONS[currentQIndex];
   const selectedOption = selectedAnswers[question.id];
@@ -44,18 +47,25 @@ export default function MasteryQuiz({ onClose }: MasteryQuizProps) {
   const scorePercent = Math.round((correctCount / QUIZ_QUESTIONS.length) * 100);
 
   return (
-    <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 sm:p-6 space-y-5 sm:space-y-6 shadow-xl">
+    <div
+      ref={dialogRef}
+      className="bg-slate-900 rounded-2xl border border-slate-800 p-4 sm:p-6 space-y-5 sm:space-y-6 shadow-xl"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quiz-modal-title"
+      tabIndex={-1}
+    >
       <div className="flex items-center justify-between border-b border-slate-800 pb-3 sm:pb-4 gap-2">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold border border-amber-500/20 shrink-0">
             <Award className="w-5 h-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm sm:text-base font-bold text-white truncate">
+            <h3 id="quiz-modal-title" className="text-sm sm:text-base font-bold text-white truncate">
               SMAW Mastery Assessment
             </h3>
             <p className="text-[10px] sm:text-xs text-slate-400 truncate">
-              10-question compliance test covering all 9 clauses (7.1.1–7.1.9)
+              {QUIZ_QUESTIONS.length}-question compliance test covering all 9 clauses (7.1.1–7.1.9)
             </p>
           </div>
         </div>

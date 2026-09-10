@@ -1,19 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Zap, 
   Flame, 
-  ArrowDown, 
-  ArrowUp, 
-  Maximize2, 
   Layers, 
-  Info, 
-  Activity, 
-  Compass, 
-  ShieldAlert, 
   Sliders, 
-  RefreshCw,
-  Sparkles,
-  ChevronRight
+  RefreshCw
 } from 'lucide-react';
 
 export default function PolaritySvgSimulation() {
@@ -24,9 +15,30 @@ export default function PolaritySvgSimulation() {
   const [showMarangoniArrows, setShowMarangoniArrows] = useState<boolean>(true);
   const [isComparing, setIsComparing] = useState<boolean>(false);
   const [animStep, setAnimStep] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  // Only animate while the diagram is actually on screen — the ticker re-renders the
+  // whole SVG 60x/second, which is wasted work when the clause is scrolled out of view.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => setIsVisible(entries[0]?.isIntersecting ?? false),
+      { rootMargin: '120px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Animation ticker for SVG particle and dash offsets
   useEffect(() => {
+    if (!isVisible) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
     let animationId: number;
     const updateTick = () => {
       setAnimStep((prev) => (prev + 1) % 1000);
@@ -34,7 +46,7 @@ export default function PolaritySvgSimulation() {
     };
     animationId = requestAnimationFrame(updateTick);
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [isVisible]);
 
   // Proportional calculations based on Amperage
   const ampFactor = amperage / 130; // ~0.6 to 1.7
@@ -78,7 +90,7 @@ export default function PolaritySvgSimulation() {
   const dcepParticles = generateParticles('DCEP');
 
   return (
-    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 space-y-5">
+    <div ref={containerRef} className="bg-slate-900 rounded-xl border border-slate-800 p-5 space-y-5">
       {/* Simulation Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>

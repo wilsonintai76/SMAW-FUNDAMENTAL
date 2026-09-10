@@ -1,4 +1,20 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* Tailwind v4 silently drops utilities for color steps that are not in its default
+   palette, so `border-slate-750` and friends previously emitted no CSS at all and fell
+   back to `currentColor` (preflight sets `border: 0 solid` with no color). These are the
+   intermediate steps this guide relies on for its industrial dark UI, interpolated
+   between the neighbouring default stops so they stay visually consistent. */
+@theme {
+  --color-slate-650: oklch(0.409 0.044 257.28);
+  --color-slate-750: oklch(0.325 0.043 258.66);
+  --color-slate-850: oklch(0.244 0.042 262.89);
+  --color-slate-925: oklch(0.169 0.042 265.22);
+
+  --color-amber-350: oklch(0.854 0.179 88.02);
+  --color-amber-450: oklch(0.799 0.189 77.25);
+}
 
 /* Hide browser scrollbars while retaining touch and wheel scrollability */
 @layer utilities {
