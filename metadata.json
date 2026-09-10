@@ -1,0 +1,8 @@
+{
+  "name": "SMAW FUNDAMENTAL",
+  "description": "Comprehensive interactive standard operating procedure (SOP) and technical guide for Shielded Metal Arc Welding (SMAW), covering principles, amperage control, machine components, machine types and standards, polarity, process labeling, pre-welding procedures, and joint configurations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* Hide browser scrollbars while retaining touch and wheel scrollability */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Print-optimized styling for offline reading or manual archiving */
+@media print {
+  /* Set standard light canvas colors for print */
+  body, html, #root {
+    background: white !important;
+    background-color: white !important;
+    color: #000000 !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Force light backgrounds & high contrast text */
+  .bg-slate-900,
+  .bg-slate-950,
+  .bg-slate-850,
+  .bg-slate-800,
+  .bg-slate-750,
+  .bg-slate-900\/98,
+  .bg-slate-950\/80,
+  .bg-slate-950\/40 {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  /* Text color corrections */
+  h1, h2, h3, h4, h5, p, span, li, strong, td, th, div, pre, code {
+    color: #000000 !important;
+    text-shadow: none !important;
+  }
+
+  /* Convert warning or badge text colors to high contrast grays/blacks */
+  .text-amber-400,
+  .text-amber-300,
+  .text-yellow-400,
+  .text-orange-400,
+  .text-red-400,
+  .text-cyan-400,
+  .text-emerald-400,
+  .text-purple-400,
+  .text-blue-400 {
+    color: #111827 !important;
+    font-weight: bold !important;
+  }
+
+  /* Hide interactive elements, buttons, headers, modals, calculators, quiz, footer */
+  header,
+  footer,
+  button,
+  input,
+  select,
+  textarea,
+  iframe,
+  #btn-toggle-notes,
+  .no-print,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Remove outer layouts or scroll spaces */
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Clean borders for sections and cards instead of dark colors */
+  .border,
+  .border-slate-800,
+  .border-slate-750,
+  .border-slate-700,
+  .border-slate-850 {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Force page breaks cleanly */
+  section {
+    page-break-inside: avoid !important;
+  }
+
+  /* Render printable elements nicely */
+  .print-only {
+    display: block !important;
+  }
+}
