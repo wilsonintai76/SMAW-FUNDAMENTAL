@@ -9,6 +9,13 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Pad the sticky mobile bottom nav so it clears the iOS home-indicator /
+     gesture area on notched phones (requires viewport-fit=cover in index.html).
+     Adds to the existing py-2 (0.5rem) bottom padding rather than replacing it. */
+  .safe-area-bottom {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Print-optimized styling for offline reading or manual archiving */
